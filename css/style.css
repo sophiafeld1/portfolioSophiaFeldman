@@ -24,10 +24,12 @@
   --cursor-border: rgba(255, 255, 255, 0.08);
   --reveal-duration: 1.45s;
   --reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --identity-progress: 0;
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
+  scroll-padding-top: 5rem;
 }
 
 section[id] {
@@ -175,13 +177,9 @@ a:hover {
   flex-direction: column;
   align-items: center;
   gap: 1.1rem;
-  transition: opacity 0.55s ease, transform 0.55s ease;
-}
-
-body.hero-scrolled .hero-aside {
-  opacity: 0;
-  transform: translateX(32px);
-  pointer-events: none;
+  opacity: calc(1 - var(--identity-progress));
+  transform: translateX(calc(var(--identity-progress) * 28px));
+  will-change: opacity, transform;
 }
 
 .hero-headshot {
@@ -196,31 +194,29 @@ body.hero-scrolled .hero-aside {
 
 .work-layout {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 720px) minmax(220px, 1fr);
   gap: 2rem;
   align-items: start;
 }
 
-body.work-identity-visible .work-layout {
-  grid-template-columns: minmax(0, 720px) minmax(240px, 1fr);
+.work-identity-sidebar {
+  position: sticky;
+  top: 6rem;
+  align-self: start;
 }
 
-.work-identity-sidebar {
+.work-identity-inner {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.25rem;
-  position: sticky;
-  top: 6rem;
-  opacity: 0;
-  transform: translateX(28px);
+  opacity: var(--identity-progress);
+  transform: translateX(calc((1 - var(--identity-progress)) * 24px));
+  will-change: opacity, transform;
   pointer-events: none;
-  transition: opacity var(--reveal-duration) var(--reveal-ease), transform var(--reveal-duration) var(--reveal-ease);
 }
 
-body.work-identity-visible .work-identity-sidebar {
-  opacity: 1;
-  transform: translateX(0);
+body.identity-sidebar-active .work-identity-inner {
   pointer-events: auto;
 }
 
@@ -386,7 +382,7 @@ body.reveal-clip-up.work-revealed #work.section {
 }
 
 body.reveal-stagger.work-revealed .work-card {
-  animation: work-card-rise 0.85s var(--reveal-ease) both;
+  animation: work-card-rise 0.65s var(--reveal-ease) both;
 }
 
 body.reveal-stagger.work-revealed .work-card[data-project-index="0"] {
@@ -471,11 +467,6 @@ body.reveal-stagger.work-revealed .work-card[data-project-index="3"] {
   grid-template-rows: auto auto auto;
   gap: 0.85rem 1rem;
   max-width: 700px;
-  margin: 0 auto;
-  transition: margin 0.45s ease;
-}
-
-body.work-identity-visible .work-grid {
   margin: 0;
 }
 
@@ -823,6 +814,7 @@ body.work-showing-detail #work.section {
   .work-card-image,
   .hero-aside,
   .work-identity-sidebar,
+  .work-identity-inner,
   .about-carousel-image,
   .work-grid,
   .work-detail-view,
@@ -995,12 +987,17 @@ body.work-showing-detail #work.section {
     max-width: 280px;
   }
 
-  body.work-identity-visible .work-layout {
+  .work-layout {
     grid-template-columns: 1fr;
   }
 
   .work-identity-sidebar {
     display: none;
+  }
+
+  .hero-aside {
+    opacity: 1;
+    transform: none;
   }
 
   .work-grid {

@@ -261,7 +261,7 @@ function openProject(index, options = {}) {
     dot.addEventListener("click", () => openProject(Number(dot.dataset.projectIndex)));
   });
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  smoothScrollTo(0);
 }
 
 function closeProject(options = {}) {
@@ -372,42 +372,85 @@ function setupWorkReveal() {
   ).observe(work);
 }
 
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function smoothScrollTo(targetY, duration = 780) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    window.scrollTo(0, targetY);
+    return;
+  }
+
+  const startY = window.scrollY;
+  const distance = targetY - startY;
+  if (Math.abs(distance) < 2) return;
+
+  const startTime = performance.now();
+
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function step(now) {
+    const progress = clamp((now - startTime) / duration, 0, 1);
+    window.scrollTo(0, startY + distance * easeInOutCubic(progress));
+    if (progress < 1) requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+}
+
 function setupHeroScroll() {
   const hero = document.getElementById("hero");
   const work = document.getElementById("work");
   const sidebar = document.querySelector(".work-identity-sidebar");
+  let ticking = false;
 
-  function measureScrollState() {
-    let heroScrolled = false;
-    let workVisible = false;
+  function updateIdentityProgress() {
+    ticking = false;
 
-    if (hero) {
-      const rect = hero.getBoundingClientRect();
-      heroScrolled = rect.bottom <= window.innerHeight * 0.85;
-      document.body.classList.toggle("hero-scrolled", heroScrolled);
+    if (window.innerWidth <= 768 || !hero || !work) {
+      document.documentElement.style.setProperty("--identity-progress", "0");
+      document.body.classList.remove("identity-sidebar-active");
+      if (sidebar) sidebar.setAttribute("aria-hidden", "true");
+      return;
     }
 
-    if (work) {
-      const rect = work.getBoundingClientRect();
-      workVisible = rect.top < window.innerHeight * 0.75 && rect.bottom > window.innerHeight * 0.2;
+    const vh = window.innerHeight;
+    const heroRect = hero.getBoundingClientRect();
+    const workRect = work.getBoundingClientRect();
+
+    // Fade hero photo out as the hero leaves the viewport
+    const heroFade = clamp(1 - heroRect.bottom / (vh * 0.88), 0, 1);
+
+    // Fade sidebar in as soon as the work section enters view
+    const workFocus = clamp((vh * 0.96 - workRect.top) / (vh * 0.38), 0, 1);
+
+    // Only fade out when scrolling past work into later sections
+    const workLeave = clamp((vh * 0.45 - workRect.bottom) / (vh * 0.35), 0, 1);
+
+    const blend = Math.max(heroFade, workFocus);
+    const progress = clamp(blend * (1 - workLeave), 0, 1);
+
+    document.documentElement.style.setProperty("--identity-progress", progress.toFixed(3));
+
+    const sidebarActive = progress > 0.08;
+    document.body.classList.toggle("identity-sidebar-active", sidebarActive);
+    if (sidebar) sidebar.setAttribute("aria-hidden", sidebarActive ? "false" : "true");
+  }
+
+  function requestUpdate() {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(updateIdentityProgress);
     }
-
-    const show = heroScrolled && workVisible;
-    document.body.classList.toggle("work-identity-visible", show);
-    if (sidebar) sidebar.setAttribute("aria-hidden", show ? "false" : "true");
   }
 
-  function scheduleMeasure() {
-    measureScrollState();
-    requestAnimationFrame(measureScrollState);
-    window.setTimeout(measureScrollState, 120);
-  }
-
-  window.addEventListener("scroll", measureScrollState, { passive: true });
-  window.addEventListener("resize", measureScrollState);
-  window.addEventListener("load", scheduleMeasure);
-  window.addEventListener("hashchange", scheduleMeasure);
-  scheduleMeasure();
+  window.addEventListener("scroll", requestUpdate, { passive: true });
+  window.addEventListener("resize", requestUpdate);
+  window.addEventListener("load", requestUpdate);
+  requestUpdate();
 }
 
 function renderSkills() {
@@ -479,11 +522,25 @@ function setupNav() {
   });
 
   links?.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", (event) => {
       links.classList.remove("open");
+
       if (document.body.classList.contains("work-showing-detail")) {
         closeProject({ skipHistory: true });
       }
+
+      const href = link.getAttribute("href");
+      if (!href?.startsWith("#") || href.length < 2) return;
+
+      const target = document.querySelector(href);
+      if (!target) return;
+
+      event.preventDefault();
+      const offset = parseFloat(getComputedStyle(target).scrollMarginTop) || 80;
+      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+
+      smoothScrollTo(Math.max(0, top));
+      window.history.pushState(null, "", href);
     });
   });
 
@@ -492,7 +549,7 @@ function setupNav() {
     if (document.body.classList.contains("work-showing-detail")) {
       closeProject({ skipHistory: true });
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    smoothScrollTo(0);
     window.history.pushState(null, "", window.location.pathname);
   });
 }
