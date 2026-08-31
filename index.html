@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=22">
+  <link rel="stylesheet" href="css/style.css?v=30">
 </head>
 <body>
   <header class="site-header">
@@ -29,17 +29,12 @@
     </nav>
   </header>
 
-  <div class="hero-scroll-identity" aria-hidden="true">
-    <span class="hero-scroll-name" data-name>Sophia Feldman</span>
-    <img class="hero-scroll-photo" src="" alt="">
-  </div>
-
   <main>
     <section class="hero" id="hero">
       <div class="hero-layout">
         <div class="hero-main">
           <p class="hero-label">Portfolio</p>
-          <h1 class="hero-title">Hi, I'm <span class="accent" data-name>Sophia Feldman</span>.</h1>
+          <h1 class="hero-title">Hi, I'm <span class="accent" data-name>Sophia Feldman</span></h1>
           <p class="hero-subtitle"></p>
         </div>
         <div class="hero-aside">
@@ -56,9 +51,15 @@
 
     <section id="work" class="section section-work">
       <h2 class="section-title">Work</h2>
-      <div class="work-section" id="work-section">
-        <div id="work-list" class="work-grid"></div>
-        <div id="work-hover-panel-bottom" class="work-hover-panel work-hover-panel--bottom" aria-hidden="true"></div>
+      <div class="work-layout">
+        <div class="work-section" id="work-section">
+          <div id="work-list" class="work-grid"></div>
+          <div id="work-hover-panel-bottom" class="work-hover-panel work-hover-panel--bottom" aria-hidden="true"></div>
+        </div>
+        <aside class="work-identity-sidebar" aria-hidden="true">
+          <span class="work-identity-name" data-name>Sophia Feldman</span>
+          <img class="work-identity-photo" src="" alt="">
+        </aside>
       </div>
       <div id="work-detail-view" class="work-detail-view" hidden></div>
     </section>
@@ -88,6 +89,6 @@
   </footer>
 
   <script src="js/projects.js?v=12"></script>
-  <script src="js/main.js?v=16"></script>
+  <script src="js/main.js?v=22"></script>
 </body>
 </html>

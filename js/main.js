@@ -1,3 +1,11 @@
+// Work grid reveal transition — change to try a different style:
+// "soft-rise" | "blur-in" | "scale-settle" | "clip-up" | "stagger"
+const WORK_REVEAL_TRANSITION = "stagger";
+
+function applyWorkRevealTransition() {
+  document.body.classList.add(`reveal-${WORK_REVEAL_TRANSITION}`);
+}
+
 function metaList(items) {
   return items.map((item) => `<li>${item}</li>`).join("");
 }
@@ -108,9 +116,7 @@ function renderProjects() {
   const cards = projects.map((project, index) => {
     const row = index < 2 ? 0 : 1;
     const previewHtml = project.image
-      ? `<a class="work-card-image-link" href="${project.liveUrl || "#"}" target="_blank" rel="noopener" aria-label="Open ${project.title} live site">
-          <img class="work-card-image" src="${project.image}" alt="${project.title} preview" loading="lazy">
-        </a>`
+      ? `<img class="work-card-image" src="${project.image}" alt="${project.title} preview" loading="lazy">`
       : `<div class="work-card-image work-card-image-placeholder">No preview</div>`;
 
     return `
@@ -135,10 +141,6 @@ function renderProjects() {
 
   const mid = document.getElementById("work-hover-panel-mid");
   if (mid) mid.style.gridArea = "2 / 1 / 3 / 3";
-
-  list.querySelectorAll(".work-card-image-link").forEach((link) => {
-    link.addEventListener("click", (event) => event.stopPropagation());
-  });
 }
 
 function setupWorkGrid() {
@@ -217,7 +219,6 @@ function setupWorkGrid() {
   });
 
   list.addEventListener("click", (event) => {
-    if (event.target.closest(".work-card-image-link")) return;
     const card = event.target.closest(".work-card");
     if (!card) return;
     openProject(Number(card.dataset.projectIndex));
@@ -289,18 +290,52 @@ function setupProjectRouting() {
   if (initial) openProject(Number(initial[1]));
 }
 
+function showWorkSection() {
+  document.body.classList.add("work-visible", "work-revealed");
+}
+
 function setupHeroScroll() {
   const hero = document.getElementById("hero");
-  if (!hero) return;
+  const work = document.getElementById("work");
+  const sidebar = document.querySelector(".work-identity-sidebar");
 
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      document.body.classList.toggle("hero-scrolled", !entry.isIntersecting);
-    },
-    { threshold: 0, rootMargin: "-80px 0px 0px 0px" }
-  );
+  if (hero) {
+    new IntersectionObserver(
+      ([entry]) => {
+        const scrolled = !entry.isIntersecting;
+        document.body.classList.toggle("hero-scrolled", scrolled);
+        if (sidebar) sidebar.setAttribute("aria-hidden", scrolled ? "false" : "true");
+      },
+      { threshold: 0, rootMargin: "-15vh 0px 0px 0px" }
+    ).observe(hero);
+  }
 
-  observer.observe(hero);
+  if (work) {
+    new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) showWorkSection();
+      },
+      { threshold: 0.05, rootMargin: "0px 0px 20% 0px" }
+    ).observe(work);
+
+    const onScroll = () => {
+      const trigger = hero ? hero.offsetHeight * 0.35 : window.innerHeight * 0.35;
+      if (window.scrollY >= trigger) showWorkSection();
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    if (window.location.hash === "#work" || window.location.hash.startsWith("#project-")) {
+      showWorkSection();
+    }
+
+    window.addEventListener("hashchange", () => {
+      if (window.location.hash === "#work" || window.location.hash.startsWith("#project-")) {
+        showWorkSection();
+      }
+    });
+  }
 }
 
 function renderSkills() {
@@ -370,6 +405,9 @@ function setupNav() {
   links?.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
       links.classList.remove("open");
+      if (link.getAttribute("href") === "#work") {
+        showWorkSection();
+      }
       if (document.body.classList.contains("work-showing-detail")) {
         closeProject();
       }
@@ -398,7 +436,7 @@ function renderSiteConfig() {
 
   const headshot = siteConfig.headshot;
   if (headshot) {
-    document.querySelectorAll(".hero-headshot, .hero-scroll-photo").forEach((img) => {
+    document.querySelectorAll(".hero-headshot, .work-identity-photo").forEach((img) => {
       img.src = headshot;
       img.alt = `${siteConfig.name} profile photo`;
     });
@@ -412,6 +450,7 @@ function renderSiteConfig() {
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
+applyWorkRevealTransition();
 renderSiteConfig();
 renderProjects();
 setupWorkGrid();
