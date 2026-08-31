@@ -47,6 +47,110 @@ function renderStoryBlock(label, content) {
   `;
 }
 
+function renderPresentationSlideshow(slides) {
+  if (!slides?.length) return "";
+
+  const slideItems = slides
+    .map((slide, index) => {
+      if (slide.type === "video") {
+        const poster = slide.poster ? ` poster="${slide.poster}"` : "";
+        return `<div class="presentation-slide${index === 0 ? " is-active" : ""}" data-slide-index="${index}" data-slide-type="video">
+          <video class="presentation-slide-video" controls playsinline preload="metadata"${poster} aria-label="${slide.alt || `Presentation slide ${index + 1}`}">
+            <source src="${slide.src}" type="video/mp4">
+          </video>
+        </div>`;
+      }
+
+      return `<div class="presentation-slide${index === 0 ? " is-active" : ""}" data-slide-index="${index}" data-slide-type="image">
+        <img class="presentation-slide-image" src="${slide.src}" alt="${slide.alt || `Presentation slide ${index + 1}`}" loading="lazy">
+      </div>`;
+    })
+    .join("");
+
+  return `
+    <section class="presentation-slideshow" aria-label="Capstone presentation" tabindex="0">
+      <div class="presentation-slideshow-header">
+        <h4 class="presentation-slideshow-title">Capstone presentation</h4>
+        <span class="presentation-slideshow-counter"><span class="presentation-current">1</span> / ${slides.length}</span>
+      </div>
+      <div class="presentation-slideshow-frame">
+        <button type="button" class="presentation-arrow presentation-arrow-prev" aria-label="Previous slide">‹</button>
+        <div class="presentation-slideshow-viewport">
+          <div class="presentation-slideshow-track">${slideItems}</div>
+        </div>
+        <button type="button" class="presentation-arrow presentation-arrow-next" aria-label="Next slide">›</button>
+      </div>
+    </section>
+  `;
+}
+
+function setupPresentationSlideshow(root) {
+  const slideshow = root?.querySelector(".presentation-slideshow");
+  if (!slideshow) return;
+
+  const slides = Array.from(slideshow.querySelectorAll(".presentation-slide"));
+  const prevBtn = slideshow.querySelector(".presentation-arrow-prev");
+  const nextBtn = slideshow.querySelector(".presentation-arrow-next");
+  const counter = slideshow.querySelector(".presentation-current");
+  const viewport = slideshow.querySelector(".presentation-slideshow-viewport");
+  let current = 0;
+  let touchStartX = 0;
+
+  function pauseVideos(exceptIndex = -1) {
+    slides.forEach((slide, index) => {
+      if (index === exceptIndex) return;
+      const video = slide.querySelector("video");
+      if (video) {
+        video.pause();
+        video.currentTime = 0;
+      }
+    });
+  }
+
+  function goTo(index) {
+    current = (index + slides.length) % slides.length;
+    slides.forEach((slide, slideIndex) => {
+      slide.classList.toggle("is-active", slideIndex === current);
+    });
+    if (counter) counter.textContent = String(current + 1);
+    pauseVideos(current);
+  }
+
+  prevBtn?.addEventListener("click", () => goTo(current - 1));
+  nextBtn?.addEventListener("click", () => goTo(current + 1));
+
+  slideshow.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      goTo(current - 1);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      goTo(current + 1);
+    }
+  });
+
+  viewport?.addEventListener(
+    "touchstart",
+    (event) => {
+      touchStartX = event.changedTouches[0]?.screenX ?? 0;
+    },
+    { passive: true }
+  );
+
+  viewport?.addEventListener(
+    "touchend",
+    (event) => {
+      const touchEndX = event.changedTouches[0]?.screenX ?? 0;
+      const deltaX = touchEndX - touchStartX;
+      if (Math.abs(deltaX) < 40) return;
+      goTo(current + (deltaX < 0 ? 1 : -1));
+    },
+    { passive: true }
+  );
+
+  goTo(0);
+}
+
 function renderHoverPanel(project) {
   const repoBtn = project.githubUrl
     ? `<a class="btn btn-secondary work-hover-btn" href="${project.githubUrl}" target="_blank" rel="noopener">View Repository</a>`
@@ -91,6 +195,12 @@ function renderDetailView(project, index) {
   const repoBtn = project.githubUrl
     ? `<a class="btn btn-secondary" href="${project.githubUrl}" target="_blank" rel="noopener">View Repository</a>`
     : "";
+  const presentationBtn = project.presentationDownload
+    ? `<a class="btn btn-secondary" href="${project.presentationDownload}" target="_blank" rel="noopener">Download PDF</a>`
+    : "";
+  const presentationHtml = project.presentationSlides?.length
+    ? renderPresentationSlideshow(project.presentationSlides)
+    : "";
 
   const dots = projects
     .map(
@@ -109,12 +219,15 @@ function renderDetailView(project, index) {
       <div class="work-detail-bottom">
         <p class="work-detail-summary">${project.summary || ""}</p>
         ${project.detail ? `<p class="work-detail-text">${project.detail}</p>` : ""}
+        ${presentationHtml}
         <div class="work-detail-story">
+          ${renderStoryBlock("Task", project.Task)}
+          ${renderStoryBlock("Impact", project.Impact)}
           ${renderStoryBlock("Problems", project.problems)}
           ${renderStoryBlock("Challenges", project.challenges)}
           ${renderStoryBlock("Solutions", project.solutions)}
         </div>
-        <div class="work-detail-actions">${siteBtn}${repoBtn}</div>
+        <div class="work-detail-actions">${siteBtn}${repoBtn}${presentationBtn}</div>
       </div>
       <nav class="work-detail-dots" aria-label="Project navigation">${dots}</nav>
     </article>
@@ -275,6 +388,8 @@ function openProject(index, options = {}) {
   detailView.querySelectorAll(".work-detail-dot").forEach((dot) => {
     dot.addEventListener("click", () => openProject(Number(dot.dataset.projectIndex)));
   });
+
+  setupPresentationSlideshow(detailView);
 
   smoothScrollTo(0);
 }

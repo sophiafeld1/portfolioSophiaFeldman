@@ -792,6 +792,108 @@ body.work-showing-detail #work.section {
   margin-bottom: 1.5rem;
 }
 
+.presentation-slideshow {
+  margin-bottom: 1.75rem;
+}
+
+.presentation-slideshow-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.presentation-slideshow-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.presentation-slideshow-counter {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.presentation-slideshow-frame {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.presentation-slideshow-viewport {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #f7f4ef;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35);
+  touch-action: pan-y;
+}
+
+.presentation-slideshow-track {
+  position: relative;
+  aspect-ratio: 16 / 9;
+}
+
+.presentation-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.presentation-slide.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.presentation-slide-image,
+.presentation-slide-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #f7f4ef;
+}
+
+.presentation-slide-video {
+  pointer-events: auto;
+}
+
+.presentation-arrow {
+  flex-shrink: 0;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 1.45rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, transform 0.15s;
+}
+
+.presentation-arrow:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: scale(1.05);
+}
+
+.presentation-arrow:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .work-detail-story {
   display: flex;
   flex-direction: column;
@@ -1093,6 +1195,39 @@ body.work-showing-detail #work.section {
 
   .work-detail-back {
     left: 1rem;
+  }
+
+  .presentation-slideshow-frame {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .presentation-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background: rgba(18, 18, 20, 0.72);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: #fff;
+  }
+
+  .presentation-arrow:hover {
+    transform: translateY(-50%) scale(1.05);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .presentation-arrow-prev {
+    left: 0.65rem;
+  }
+
+  .presentation-arrow-next {
+    right: 0.65rem;
+  }
+
+  .presentation-slideshow-viewport {
+    grid-column: 1;
   }
 }
 
