@@ -8,15 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=15">
+  <link rel="stylesheet" href="css/style.css?v=22">
 </head>
 <body>
   <header class="site-header">
     <nav class="nav">
       <div class="nav-brand">
-        <button type="button" class="nav-back-btn" hidden aria-label="Back to all work">
-          <span aria-hidden="true">↓</span>
-        </button>
         <a href="#" class="nav-logo" data-name>Sophia Feldman</a>
       </div>
       <ul class="nav-links">
@@ -32,32 +29,38 @@
     </nav>
   </header>
 
+  <div class="hero-scroll-identity" aria-hidden="true">
+    <span class="hero-scroll-name" data-name>Sophia Feldman</span>
+    <img class="hero-scroll-photo" src="" alt="">
+  </div>
+
   <main>
-    <section class="hero">
+    <section class="hero" id="hero">
       <div class="hero-layout">
         <div class="hero-main">
           <p class="hero-label">Portfolio</p>
           <h1 class="hero-title">Hi, I'm <span class="accent" data-name>Sophia Feldman</span>.</h1>
           <p class="hero-subtitle"></p>
-          <div class="hero-links">
-            <a href="#work" class="btn btn-primary">View my work</a>
-            <a href="assets/Sophia_Feldman_Resume.pdf" class="btn btn-secondary" target="_blank" rel="noopener">Resume</a>
-            <a href="#contact" class="btn btn-secondary">Get in touch</a>
-          </div>
         </div>
-        <figure class="hero-headshot-frame">
-          <img class="hero-headshot" src="assets/sophiaheadshot.jpeg" alt="Sophia Feldman">
-        </figure>
+        <div class="hero-aside">
+          <img class="hero-headshot" src="" alt="">
+          <a class="hero-linkedin" href="" target="_blank" rel="noopener" aria-label="LinkedIn profile">
+            <svg class="hero-linkedin-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.75 1.75 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.77v1.25h.08a3.07 3.07 0 012.7-1.48c1.78 0 3.45 1.18 3.45 3.76z"/>
+            </svg>
+            LinkedIn
+          </a>
+        </div>
       </div>
     </section>
 
-    <section id="work" class="section">
-      <div id="work-list-view">
-        <h2 class="section-title">Work</h2>
+    <section id="work" class="section section-work">
+      <h2 class="section-title">Work</h2>
+      <div class="work-section" id="work-section">
         <div id="work-list" class="work-grid"></div>
-        <div id="work-expand-panel" class="work-expand-panel" hidden></div>
+        <div id="work-hover-panel-bottom" class="work-hover-panel work-hover-panel--bottom" aria-hidden="true"></div>
       </div>
-      <div id="work-detail-view" class="work-detail-page" hidden></div>
+      <div id="work-detail-view" class="work-detail-view" hidden></div>
     </section>
 
     <section id="about" class="section section-alt">
@@ -84,7 +87,7 @@
     <p>&copy; <span id="year"></span> <span data-name>Sophia Feldman</span></p>
   </footer>
 
-  <script src="js/projects.js?v=10"></script>
-  <script src="js/main.js?v=10"></script>
+  <script src="js/projects.js?v=12"></script>
+  <script src="js/main.js?v=16"></script>
 </body>
 </html>

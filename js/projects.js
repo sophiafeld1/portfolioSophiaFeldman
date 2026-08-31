@@ -2,7 +2,9 @@
 
 const siteConfig = {
   name: "Sophia Feldman",
-  tagline: "Software development, AI, and data science.",
+  tagline: "Data science, software development, web development, and consulting.",
+  headshot: "assets/sophiaheadshot.jpeg",
+  linkedinUrl: "https://www.linkedin.com/in/sophia-feldman/",
   about:
     "Recently graduated from James Madison University with a multidisciplinary background in software development, AI, and data science. I enjoy building practical applications that solve real problems, from agentic AI systems to full-stack web applications.",
   skillCategories: [

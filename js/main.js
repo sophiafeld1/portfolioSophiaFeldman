@@ -2,238 +2,305 @@ function metaList(items) {
   return items.map((item) => `<li>${item}</li>`).join("");
 }
 
-function projectSlug(title) {
-  return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
-
-function projectLinks(project) {
-  const links = [];
-  if (project.liveUrl) {
-    links.push(`<a class="work-tag" href="${project.liveUrl}" target="_blank" rel="noopener">Live demo</a>`);
-  }
-  if (project.githubUrl) {
-    links.push(`<a class="work-tag" href="${project.githubUrl}" target="_blank" rel="noopener">Code</a>`);
-  }
-  if (project.clientUrl) {
-    links.push(
-      `<a class="work-tag" href="${project.clientUrl}" target="_blank" rel="noopener">${project.clientLabel || "Client site"}</a>`
-    );
-  }
-  return links;
-}
-
-function renderProjectMeta(project) {
+function renderProjectMetaList(project) {
   return `
-    <div class="work-panel-meta">
-      <dl class="work-meta-group">
-        <div class="work-meta-field">
-          <dt>Client</dt>
-          <dd>${project.client || project.context || "—"}</dd>
-        </div>
-        <div class="work-meta-field">
-          <dt>Year</dt>
-          <dd>${project.year || "—"}</dd>
-        </div>
-        <div class="work-meta-field">
-          <dt>Project type</dt>
-          <dd><ul class="work-meta-list">${metaList(project.projectType || [])}</ul></dd>
-        </div>
-      </dl>
-      <dl class="work-meta-group">
-        <div class="work-meta-field">
-          <dt>Role</dt>
-          <dd><ul class="work-meta-list">${metaList(project.role || [])}</ul></dd>
-        </div>
-        <div class="work-meta-field">
-          <dt>Tech</dt>
-          <dd><ul class="work-meta-list">${metaList(project.tools || [])}</ul></dd>
-        </div>
-      </dl>
-    </div>
-  `;
-}
-
-function renderExpandPanel(project) {
-  const links = projectLinks(project);
-  return `
-    <div class="work-panel">
-      ${renderProjectMeta(project)}
-      <div class="work-panel-content">
-        <p class="work-summary">${project.summary || ""}</p>
-        ${project.detail ? `<p class="work-detail">${project.detail}</p>` : ""}
-        ${links.length ? `<div class="work-tags">${links.join("")}</div>` : ""}
+    <dl class="work-detail-meta-list">
+      <div class="work-meta-field">
+        <dt>Client</dt>
+        <dd>${project.client || project.context || "—"}</dd>
       </div>
-    </div>
+      <div class="work-meta-field">
+        <dt>Year</dt>
+        <dd>${project.year || "—"}</dd>
+      </div>
+      <div class="work-meta-field">
+        <dt>Project type</dt>
+        <dd><ul class="work-meta-list">${metaList(project.projectType || [])}</ul></dd>
+      </div>
+      <div class="work-meta-field">
+        <dt>Role</dt>
+        <dd><ul class="work-meta-list">${metaList(project.role || [])}</ul></dd>
+      </div>
+      <div class="work-meta-field">
+        <dt>Tech</dt>
+        <dd><ul class="work-meta-list">${metaList(project.tools || [])}</ul></dd>
+      </div>
+    </dl>
   `;
 }
-function renderStorySection(label, content) {
+
+function renderStoryBlock(label, content) {
   if (!content) return "";
   return `
-    <section class="project-story-row">
-      <h3 class="project-story-label">${label}</h3>
-      <div class="project-story-body"><p>${content}</p></div>
+    <section class="work-story-block">
+      <h4 class="work-story-label">${label}</h4>
+      <p class="work-story-text">${content}</p>
     </section>
   `;
 }
 
-function renderProjectDetail(project) {
-  const links = projectLinks(project);
-  const previewHtml = project.image
-    ? `<img class="project-detail-hero" src="${project.image}" alt="${project.title} preview">`
-    : `<div class="project-detail-hero project-detail-hero-placeholder">Preview coming soon</div>`;
+function renderHoverPanel(project) {
+  const repoBtn = project.githubUrl
+    ? `<a class="btn btn-secondary work-hover-btn" href="${project.githubUrl}" target="_blank" rel="noopener">View Repository</a>`
+    : "";
+  const siteBtn = project.liveUrl
+    ? `<a class="btn btn-primary work-hover-btn" href="${project.liveUrl}" target="_blank" rel="noopener">View Website</a>`
+    : "";
 
   return `
-    <div class="project-detail">
-      <div class="project-story">
-        ${renderStorySection("Problems", project.problems)}
-        ${renderStorySection("Challenges", project.challenges)}
-        ${renderStorySection("Solutions", project.solutions)}
-      </div>
-      ${previewHtml}
-      ${links.length ? `<div class="project-detail-links">${links.join("")}</div>` : ""}
+    <div class="work-hover-panel-inner">
+      <p class="work-hover-blurb">${project.summary || ""}</p>
+      <div class="work-hover-actions">${repoBtn}${siteBtn}</div>
     </div>
   `;
 }
 
-function setDetailHeader(project) {
-  const logo = document.querySelector(".nav-logo");
-  const backBtn = document.querySelector(".nav-back-btn");
-  if (!logo || !backBtn) return;
+function renderDetailView(project, index) {
+  const previewHtml = project.image
+    ? `<img class="work-detail-image" src="${project.image}" alt="${project.title} preview">`
+    : `<div class="work-detail-image work-detail-image-placeholder">No preview</div>`;
 
-  if (project) {
-    logo.textContent = `${siteConfig.name} — ${project.title}`;
-    backBtn.hidden = false;
-    document.title = `${project.title} — ${siteConfig.name}`;
-  } else {
-    logo.textContent = siteConfig.name;
-    backBtn.hidden = true;
-    document.title = `${siteConfig.name} — Portfolio`;
-  }
+  const siteBtn = project.liveUrl
+    ? `<a class="btn btn-primary" href="${project.liveUrl}" target="_blank" rel="noopener">View Website</a>`
+    : "";
+  const repoBtn = project.githubUrl
+    ? `<a class="btn btn-secondary" href="${project.githubUrl}" target="_blank" rel="noopener">View Repository</a>`
+    : "";
+
+  const dots = projects
+    .map(
+      (_, dotIndex) =>
+        `<button type="button" class="work-detail-dot${dotIndex === index ? " is-active" : ""}" data-project-index="${dotIndex}" aria-label="View project ${dotIndex + 1}"></button>`
+    )
+    .join("");
+
+  return `
+    <button type="button" class="work-detail-back" aria-label="Back to projects">← Back</button>
+    <article class="work-detail-card">
+      <div class="work-detail-top">
+        <div class="work-detail-preview">${previewHtml}</div>
+        <div class="work-detail-meta">${renderProjectMetaList(project)}</div>
+      </div>
+      <div class="work-detail-bottom">
+        <p class="work-detail-summary">${project.summary || ""}</p>
+        ${project.detail ? `<p class="work-detail-text">${project.detail}</p>` : ""}
+        <div class="work-detail-story">
+          ${renderStoryBlock("Problems", project.problems)}
+          ${renderStoryBlock("Challenges", project.challenges)}
+          ${renderStoryBlock("Solutions", project.solutions)}
+        </div>
+        <div class="work-detail-actions">${siteBtn}${repoBtn}</div>
+      </div>
+      <nav class="work-detail-dots" aria-label="Project navigation">${dots}</nav>
+    </article>
+  `;
 }
 
 function renderProjects() {
   const list = document.getElementById("work-list");
   if (!list || !projects.length) return;
 
-  list.innerHTML = projects
-    .map((project, index) => {
-      const slug = projectSlug(project.title);
-      const previewHtml = project.image
-        ? `<img class="work-card-image" src="${project.image}" alt="${project.title} preview" loading="lazy">`
-        : `<div class="work-card-image work-card-image-placeholder">No preview</div>`;
+  const midPanel = document.createElement("div");
+  midPanel.id = "work-hover-panel-mid";
+  midPanel.className = "work-hover-panel work-hover-panel--mid";
+  midPanel.setAttribute("aria-hidden", "true");
 
-      return `
-        <article class="work-card" data-project-index="${index}" data-project-slug="${slug}" tabindex="0">
-          <div class="work-card-media">${previewHtml}</div>
-          <div class="work-card-info">
-            <h3 class="work-title">${project.title}</h3>
-            <p class="work-context">${project.context || ""}</p>
-          </div>
-        </article>
-      `;
-    })
-    .join("");
+  const cards = projects.map((project, index) => {
+    const row = index < 2 ? 0 : 1;
+    const previewHtml = project.image
+      ? `<a class="work-card-image-link" href="${project.liveUrl || "#"}" target="_blank" rel="noopener" aria-label="Open ${project.title} live site">
+          <img class="work-card-image" src="${project.image}" alt="${project.title} preview" loading="lazy">
+        </a>`
+      : `<div class="work-card-image work-card-image-placeholder">No preview</div>`;
+
+    return `
+      <article class="work-card" data-project-index="${index}" data-row="${row}" tabindex="0">
+        <div class="work-card-media">${previewHtml}</div>
+        <div class="work-card-info">
+          <h3 class="work-title">${project.title}</h3>
+          <p class="work-context">${project.context || ""}</p>
+        </div>
+      </article>
+    `;
+  });
+
+  list.innerHTML = cards.slice(0, 2).join("") + midPanel.outerHTML + cards.slice(2).join("");
+
+  list.querySelectorAll(".work-card").forEach((card, index) => {
+    if (index === 0) card.style.gridArea = "1 / 1";
+    if (index === 1) card.style.gridArea = "1 / 2";
+    if (index === 2) card.style.gridArea = "3 / 1";
+    if (index === 3) card.style.gridArea = "3 / 2";
+  });
+
+  const mid = document.getElementById("work-hover-panel-mid");
+  if (mid) mid.style.gridArea = "2 / 1 / 3 / 3";
+
+  list.querySelectorAll(".work-card-image-link").forEach((link) => {
+    link.addEventListener("click", (event) => event.stopPropagation());
+  });
 }
 
-function openProject(index) {
-  const project = projects[index];
-  if (!project) return;
-
-  const listView = document.getElementById("work-list-view");
-  const detailView = document.getElementById("work-detail-view");
-  if (!listView || !detailView) return;
-
-  detailView.innerHTML = renderProjectDetail(project);
-  detailView.hidden = false;
-  listView.hidden = true;
-  document.body.classList.add("work-showing-detail");
-  setDetailHeader(project);
-
-  const slug = projectSlug(project.title);
-  history.replaceState(null, "", `#work/${slug}`);
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function closeProject() {
-  const listView = document.getElementById("work-list-view");
-  const detailView = document.getElementById("work-detail-view");
-  if (!listView || !detailView) return;
-
-  detailView.hidden = true;
-  detailView.innerHTML = "";
-  listView.hidden = false;
-  document.body.classList.remove("work-showing-detail");
-  setDetailHeader(null);
-  history.replaceState(null, "", "#work");
-  document.getElementById("work")?.scrollIntoView({ behavior: "smooth" });
-}
-
-function setupWorkExpandPanel() {
+function setupWorkGrid() {
+  const section = document.getElementById("work-section");
   const list = document.getElementById("work-list");
-  const panel = document.getElementById("work-expand-panel");
-  if (!list || !panel) return;
+  const midPanel = document.getElementById("work-hover-panel-mid");
+  const bottomPanel = document.getElementById("work-hover-panel-bottom");
+  if (!section || !list || !midPanel || !bottomPanel) return;
 
-  let activeIndex = null;
+  let activeCard = null;
   let hideTimer = null;
 
-  function showPanel(index) {
-    const project = projects[index];
+  function getPanelForCard(card) {
+    return Number(card.dataset.row) === 0 ? midPanel : bottomPanel;
+  }
+
+  function hideAllPanels() {
+    [midPanel, bottomPanel].forEach((panel) => {
+      panel.classList.remove("is-visible");
+      panel.setAttribute("aria-hidden", "true");
+      panel.innerHTML = "";
+    });
+  }
+
+  function showPanel(card) {
+    const project = projects[Number(card.dataset.projectIndex)];
     if (!project) return;
+
     clearTimeout(hideTimer);
-    activeIndex = index;
-    panel.innerHTML = renderExpandPanel(project);
-    panel.hidden = false;
-    list.querySelectorAll(".work-card").forEach((card, i) => {
-      card.classList.toggle("is-active", i === index);
+
+    const panel = getPanelForCard(card);
+    const otherPanel = panel === midPanel ? bottomPanel : midPanel;
+
+    otherPanel.classList.remove("is-visible");
+    otherPanel.setAttribute("aria-hidden", "true");
+    otherPanel.innerHTML = "";
+
+    panel.innerHTML = renderHoverPanel(project);
+    panel.classList.add("is-visible");
+    panel.setAttribute("aria-hidden", "false");
+
+    activeCard = card;
+    section.classList.add("is-previewing");
+
+    list.querySelectorAll(".work-card").forEach((entry) => {
+      entry.classList.toggle("is-hovered", entry === card);
+      entry.classList.toggle("is-dimmed", entry !== card);
     });
   }
 
   function hidePanel() {
-    hideTimer = setTimeout(() => {
-      activeIndex = null;
-      panel.hidden = true;
-      panel.innerHTML = "";
-      list.querySelectorAll(".work-card").forEach((card) => card.classList.remove("is-active"));
-    }, 120);
+    hideTimer = window.setTimeout(() => {
+      activeCard = null;
+      section.classList.remove("is-previewing");
+      hideAllPanels();
+      list.querySelectorAll(".work-card").forEach((entry) => {
+        entry.classList.remove("is-hovered", "is-dimmed");
+      });
+    }, 140);
   }
 
   list.addEventListener("mouseover", (event) => {
     const card = event.target.closest(".work-card");
     if (!card) return;
-    showPanel(Number(card.dataset.projectIndex));
+    clearTimeout(hideTimer);
+    if (card === activeCard) return;
+    showPanel(card);
   });
 
-  list.addEventListener("mouseleave", hidePanel);
-  panel.addEventListener("mouseenter", () => clearTimeout(hideTimer));
-  panel.addEventListener("mouseleave", hidePanel);
-}
+  section.addEventListener("mouseleave", hidePanel);
+  section.addEventListener("mouseenter", () => clearTimeout(hideTimer));
 
-function setupWorkList() {
-  const list = document.getElementById("work-list");
-  if (!list) return;
+  [midPanel, bottomPanel].forEach((panel) => {
+    panel.addEventListener("mouseenter", () => clearTimeout(hideTimer));
+    panel.addEventListener("mouseleave", hidePanel);
+  });
 
   list.addEventListener("click", (event) => {
-    if (event.target.closest("a")) return;
-    const item = event.target.closest(".work-card");
-    if (!item) return;
-    openProject(Number(item.dataset.projectIndex));
+    if (event.target.closest(".work-card-image-link")) return;
+    const card = event.target.closest(".work-card");
+    if (!card) return;
+    openProject(Number(card.dataset.projectIndex));
   });
 
   list.addEventListener("keydown", (event) => {
     if (event.key !== "Enter" && event.key !== " ") return;
-    const item = event.target.closest(".work-card");
-    if (!item) return;
+    const card = event.target.closest(".work-card");
+    if (!card) return;
     event.preventDefault();
-    openProject(Number(item.dataset.projectIndex));
+    openProject(Number(card.dataset.projectIndex));
+  });
+}
+
+let activeProjectIndex = null;
+
+function openProject(index) {
+  const project = projects[index];
+  const detailView = document.getElementById("work-detail-view");
+  const workSection = document.getElementById("work-section");
+  const workHeading = document.querySelector("#work .section-title");
+  if (!project || !detailView || !workSection) return;
+
+  activeProjectIndex = index;
+  detailView.innerHTML = renderDetailView(project, index);
+  detailView.hidden = false;
+  workSection.hidden = true;
+  if (workHeading) workHeading.hidden = true;
+
+  document.body.classList.add("work-showing-detail");
+  window.history.pushState({ projectIndex: index }, "", `#project-${index}`);
+
+  detailView.querySelector(".work-detail-back")?.addEventListener("click", closeProject);
+  detailView.querySelectorAll(".work-detail-dot").forEach((dot) => {
+    dot.addEventListener("click", () => openProject(Number(dot.dataset.projectIndex)));
   });
 
-  const hash = window.location.hash;
-  if (hash.startsWith("#work/")) {
-    const slug = hash.slice(6);
-    const index = projects.findIndex((p) => projectSlug(p.title) === slug);
-    if (index >= 0) openProject(index);
-  }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function closeProject() {
+  const detailView = document.getElementById("work-detail-view");
+  const workSection = document.getElementById("work-section");
+  const workHeading = document.querySelector("#work .section-title");
+  if (!detailView || !workSection) return;
+
+  activeProjectIndex = null;
+  detailView.hidden = true;
+  detailView.innerHTML = "";
+  workSection.hidden = false;
+  if (workHeading) workHeading.hidden = false;
+
+  document.body.classList.remove("work-showing-detail");
+  window.history.pushState(null, "", "#work");
+}
+
+function setupProjectRouting() {
+  window.addEventListener("popstate", () => {
+    const hash = window.location.hash;
+    const match = hash.match(/^#project-(\d+)$/);
+    if (match) {
+      openProject(Number(match[1]));
+    } else if (document.body.classList.contains("work-showing-detail")) {
+      closeProject();
+    }
+  });
+
+  const initial = window.location.hash.match(/^#project-(\d+)$/);
+  if (initial) openProject(Number(initial[1]));
+}
+
+function setupHeroScroll() {
+  const hero = document.getElementById("hero");
+  if (!hero) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      document.body.classList.toggle("hero-scrolled", !entry.isIntersecting);
+    },
+    { threshold: 0, rootMargin: "-80px 0px 0px 0px" }
+  );
+
+  observer.observe(hero);
 }
 
 function renderSkills() {
@@ -295,8 +362,6 @@ function setupNav() {
   const toggle = document.querySelector(".nav-toggle");
   const links = document.querySelector(".nav-links");
 
-  document.querySelector(".nav-back-btn")?.addEventListener("click", closeProject);
-
   toggle?.addEventListener("click", () => {
     const isOpen = links.classList.toggle("open");
     toggle.setAttribute("aria-expanded", isOpen);
@@ -305,10 +370,17 @@ function setupNav() {
   links?.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
       links.classList.remove("open");
-      if (link.getAttribute("href") === "#work" && document.body.classList.contains("work-showing-detail")) {
+      if (document.body.classList.contains("work-showing-detail")) {
         closeProject();
       }
     });
+  });
+
+  document.querySelector(".nav-logo")?.addEventListener("click", (event) => {
+    if (document.body.classList.contains("work-showing-detail")) {
+      event.preventDefault();
+      closeProject();
+    }
   });
 }
 
@@ -317,18 +389,34 @@ function renderSiteConfig() {
   document.querySelectorAll("[data-name]").forEach((el) => {
     el.textContent = siteConfig.name;
   });
+
   const tagline = document.querySelector(".hero-subtitle");
   if (tagline && siteConfig.tagline) tagline.textContent = siteConfig.tagline;
+
   const about = document.querySelector(".about-text");
   if (about && siteConfig.about) about.textContent = siteConfig.about;
+
+  const headshot = siteConfig.headshot;
+  if (headshot) {
+    document.querySelectorAll(".hero-headshot, .hero-scroll-photo").forEach((img) => {
+      img.src = headshot;
+      img.alt = `${siteConfig.name} profile photo`;
+    });
+  }
+
+  const linkedin = document.querySelector(".hero-linkedin");
+  if (linkedin && siteConfig.linkedinUrl) {
+    linkedin.href = siteConfig.linkedinUrl;
+  }
 }
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
 renderSiteConfig();
 renderProjects();
-setupWorkExpandPanel();
-setupWorkList();
+setupWorkGrid();
+setupHeroScroll();
+setupProjectRouting();
 renderSkills();
 renderContact();
 setupContact();
