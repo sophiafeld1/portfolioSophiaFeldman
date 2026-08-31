@@ -235,12 +235,14 @@ function setupWorkGrid() {
 
 let activeProjectIndex = null;
 
-function openProject(index) {
+function openProject(index, options = {}) {
   const project = projects[index];
   const detailView = document.getElementById("work-detail-view");
   const workSection = document.getElementById("work-section");
   const workHeading = document.querySelector("#work .section-title");
   if (!project || !detailView || !workSection) return;
+
+  showWorkSection();
 
   activeProjectIndex = index;
   detailView.innerHTML = renderDetailView(project, index);
@@ -249,9 +251,12 @@ function openProject(index) {
   if (workHeading) workHeading.hidden = true;
 
   document.body.classList.add("work-showing-detail");
-  window.history.pushState({ projectIndex: index }, "", `#project-${index}`);
 
-  detailView.querySelector(".work-detail-back")?.addEventListener("click", closeProject);
+  if (!options.skipHistory) {
+    window.history.pushState({ projectIndex: index }, "", `#project-${index}`);
+  }
+
+  detailView.querySelector(".work-detail-back")?.addEventListener("click", () => closeProject());
   detailView.querySelectorAll(".work-detail-dot").forEach((dot) => {
     dot.addEventListener("click", () => openProject(Number(dot.dataset.projectIndex)));
   });
@@ -259,7 +264,7 @@ function openProject(index) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function closeProject() {
+function closeProject(options = {}) {
   const detailView = document.getElementById("work-detail-view");
   const workSection = document.getElementById("work-section");
   const workHeading = document.querySelector("#work .section-title");
@@ -272,70 +277,99 @@ function closeProject() {
   if (workHeading) workHeading.hidden = false;
 
   document.body.classList.remove("work-showing-detail");
-  window.history.pushState(null, "", "#work");
+
+  if (!options.skipHistory) {
+    window.history.pushState(null, "", "#work");
+  }
+}
+
+function setupAboutCarousel() {
+  const images = siteConfig.aboutImages?.length
+    ? siteConfig.aboutImages
+    : [siteConfig.headshot].filter(Boolean);
+  const track = document.getElementById("about-carousel-track");
+  const dotsNav = document.getElementById("about-carousel-dots");
+  if (!track || !dotsNav || !images.length) return;
+
+  track.innerHTML = images
+    .map(
+      (src, index) =>
+        `<img class="about-carousel-image${index === 0 ? " is-active" : ""}" src="${src}" alt="${siteConfig.name} photo ${index + 1}" data-index="${index}">`
+    )
+    .join("");
+
+  dotsNav.innerHTML = images
+    .map(
+      (_, index) =>
+        `<button type="button" class="about-carousel-dot${index === 0 ? " is-active" : ""}" data-index="${index}" aria-label="Show photo ${index + 1}"></button>`
+    )
+    .join("");
+
+  let current = 0;
+  let timer = null;
+
+  function goTo(index) {
+    current = (index + images.length) % images.length;
+    track.querySelectorAll(".about-carousel-image").forEach((img, i) => {
+      img.classList.toggle("is-active", i === current);
+    });
+    dotsNav.querySelectorAll(".about-carousel-dot").forEach((dot, i) => {
+      dot.classList.toggle("is-active", i === current);
+    });
+  }
+
+  function startTimer() {
+    if (timer) clearInterval(timer);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    timer = window.setInterval(() => goTo(current + 1), 2000);
+  }
+
+  dotsNav.querySelectorAll(".about-carousel-dot").forEach((dot) => {
+    dot.addEventListener("click", () => {
+      goTo(Number(dot.dataset.index));
+      startTimer();
+    });
+  });
+
+  startTimer();
 }
 
 function setupProjectRouting() {
-  window.addEventListener("popstate", () => {
-    const hash = window.location.hash;
-    const match = hash.match(/^#project-(\d+)$/);
-    if (match) {
-      openProject(Number(match[1]));
-    } else if (document.body.classList.contains("work-showing-detail")) {
-      closeProject();
+  function handleRoute() {
+    const hash = window.location.hash.slice(1);
+    const projectMatch = hash.match(/^project-(\d+)$/);
+
+    if (projectMatch) {
+      showWorkSection();
+      openProject(Number(projectMatch[1]), { skipHistory: true });
+      return;
     }
-  });
+
+    if (document.body.classList.contains("work-showing-detail")) {
+      closeProject({ skipHistory: true });
+    }
+  }
+
+  window.addEventListener("hashchange", handleRoute);
+  window.addEventListener("popstate", handleRoute);
 
   const initial = window.location.hash.match(/^#project-(\d+)$/);
-  if (initial) openProject(Number(initial[1]));
+  if (initial) {
+    showWorkSection();
+    openProject(Number(initial[1]), { skipHistory: true });
+  }
 }
 
-function showWorkSection() {
-  document.body.classList.add("work-visible", "work-revealed");
-}
-
-function setupHeroScroll() {
-  const hero = document.getElementById("hero");
+function setupWorkReveal() {
   const work = document.getElementById("work");
-  const sidebar = document.querySelector(".work-identity-sidebar");
+  if (!work) return;
 
-  if (hero) {
-    new IntersectionObserver(
-      ([entry]) => {
-        const scrolled = !entry.isIntersecting;
-        document.body.classList.toggle("hero-scrolled", scrolled);
-        if (sidebar) sidebar.setAttribute("aria-hidden", scrolled ? "false" : "true");
-      },
-      { threshold: 0, rootMargin: "-15vh 0px 0px 0px" }
-    ).observe(hero);
-  }
-
-  if (work) {
-    new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) showWorkSection();
-      },
-      { threshold: 0.05, rootMargin: "0px 0px 20% 0px" }
-    ).observe(work);
-
-    const onScroll = () => {
-      const trigger = hero ? hero.offsetHeight * 0.35 : window.innerHeight * 0.35;
-      if (window.scrollY >= trigger) showWorkSection();
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-
-    if (window.location.hash === "#work" || window.location.hash.startsWith("#project-")) {
-      showWorkSection();
-    }
-
-    window.addEventListener("hashchange", () => {
-      if (window.location.hash === "#work" || window.location.hash.startsWith("#project-")) {
-        showWorkSection();
-      }
-    });
-  }
+  new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) showWorkSection();
+    },
+    { threshold: 0.08 }
+  ).observe(work);
 }
 
 function renderSkills() {
@@ -393,6 +427,10 @@ function setupContact() {
   });
 }
 
+function showWorkSection() {
+  document.body.classList.add("work-visible", "work-revealed");
+}
+
 function setupNav() {
   const toggle = document.querySelector(".nav-toggle");
   const links = document.querySelector(".nav-links");
@@ -405,20 +443,19 @@ function setupNav() {
   links?.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
       links.classList.remove("open");
-      if (link.getAttribute("href") === "#work") {
-        showWorkSection();
-      }
       if (document.body.classList.contains("work-showing-detail")) {
-        closeProject();
+        closeProject({ skipHistory: true });
       }
     });
   });
 
   document.querySelector(".nav-logo")?.addEventListener("click", (event) => {
+    event.preventDefault();
     if (document.body.classList.contains("work-showing-detail")) {
-      event.preventDefault();
-      closeProject();
+      closeProject({ skipHistory: true });
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.history.pushState(null, "", window.location.pathname);
   });
 }
 
@@ -436,10 +473,11 @@ function renderSiteConfig() {
 
   const headshot = siteConfig.headshot;
   if (headshot) {
-    document.querySelectorAll(".hero-headshot, .work-identity-photo").forEach((img) => {
+    const img = document.querySelector(".hero-headshot");
+    if (img) {
       img.src = headshot;
       img.alt = `${siteConfig.name} profile photo`;
-    });
+    }
   }
 
   const linkedin = document.querySelector(".hero-linkedin");
@@ -452,10 +490,11 @@ document.getElementById("year").textContent = new Date().getFullYear();
 
 applyWorkRevealTransition();
 renderSiteConfig();
+setupAboutCarousel();
 renderProjects();
 setupWorkGrid();
-setupHeroScroll();
 setupProjectRouting();
+setupWorkReveal();
 renderSkills();
 renderContact();
 setupContact();
