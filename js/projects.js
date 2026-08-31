@@ -32,13 +32,16 @@ const projects = [
     title: "Path to Peace Psychotherapy",
     context: "Visions Web Development",
     client: "Path to Peace Psychotherapy",
-    year: "2025",
+    year: "August 2026",
     projectType: ["Website", "Client Work"],
     role: ["Web development", "Deployment"],
     summary:
       "A production website for a trauma therapy practice in Reston, VA — built and deployed for a real client through Visions web development.",
     detail:
       "Designed and launched the full site on Vercel, including a contact flow powered by the <strong>Postmark API</strong> so the practice can receive inquiries reliably from day one.",
+    problems: "[Edit: What problem did this project need to solve?]",
+    challenges: "[Edit: What were the main challenges?]",
+    solutions: "[Edit: How did you solve it? What did you build?]",
     tools: ["Next.js", "Vercel", "Postmark API", "JavaScript"],
     liveUrl: "https://path2-peace.vercel.app/",
     githubUrl: "https://github.com/SophiaFeld1/Path2Peace",
@@ -55,6 +58,9 @@ const projects = [
       "An online clothing brand I founded — from product design and manufacturing to the e-commerce site and digital marketing.",
     detail:
       "Built under <strong>Visions web development</strong>, generating $1,500+ across 36 sales through the shop site, product curation, and brand marketing.",
+    problems: "[Edit: What problem did this project need to solve?]",
+    challenges: "[Edit: What were the main challenges?]",
+    solutions: "[Edit: How did you solve it? What did you build?]",
     tools: ["Next.js", "Vercel", "E-commerce"],
     liveUrl: "https://visions-shop-sophias-projects-5010dcb3.vercel.app/",
     githubUrl: "https://github.com/sophiafeld1/Visions",
@@ -70,6 +76,9 @@ const projects = [
       "A sponsor management and outreach tool built for Empowerment3 — a JMU center for physical activity and wellness for underserved communities.",
     detail:
       "Pro-bono consulting project through the <strong>Madison Consulting Club</strong>. Centralizes sponsor records in a searchable database and generates customized outreach emails from record fields and criteria — template-driven, not AI.",
+    problems: "[Edit: What problem did this project need to solve?]",
+    challenges: "[Edit: What were the main challenges?]",
+    solutions: "[Edit: How did you solve it? What did you build?]",
     tools: ["Streamlit", "Python", "Pandas", "SQL"],
     liveUrl: "https://sophiafeld1-empowerment3-app-bbtrse.streamlit.app/",
     githubUrl: "https://github.com/sophiafeld1/Empowerment3",
@@ -88,6 +97,9 @@ const projects = [
       "ISAT Recruiter is an AI-powered advising agent that helps prospective and current students navigate JMU's Integrated Science & Technology program.",
     detail:
       "Built as my <strong>senior capstone</strong>, this agentic RAG application answers questions about courses, concentrations, and prerequisites — and generates 4-year academic plans using ABET documentation, course catalogs, and crawled ISAT website content.",
+    problems: "[Edit: What problem did this project need to solve?]",
+    challenges: "[Edit: What were the main challenges?]",
+    solutions: "[Edit: How did you solve it? What did you build?]",
     tools: ["LangGraph", "RAG", "Next.js", "PostgreSQL", "OpenAI API", "Python"],
     liveUrl: "https://isat-recruiter-2w1a-n2hnyxvr6-sophias-projects-5010dcb3.vercel.app/",
     githubUrl: "https://github.com/sophiafeld1/ISATRecruiter",
