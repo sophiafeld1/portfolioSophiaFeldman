@@ -3,6 +3,12 @@
 const siteConfig = {
   name: "Sophia Feldman",
   tagline: "Data science, software development, web development, and consulting.",
+  heroRotatorPhrases: [
+    "a consultant",
+    "a data scientist",
+    "a software developer",
+    "a web developer",
+  ],
   headshot: "assets/sophiaheadshot.jpeg",
   linkedinUrl: "https://www.linkedin.com/in/sophia-feldman/",
   // Photos for the About page carousel (left side)

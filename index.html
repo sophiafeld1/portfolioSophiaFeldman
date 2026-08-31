@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=35">
+  <link rel="stylesheet" href="css/style.css?v=36">
 </head>
 <body>
   <header class="site-header">
@@ -34,7 +34,15 @@
       <div class="hero-layout">
         <div class="hero-main">
           <p class="hero-label">Portfolio</p>
-          <h1 class="hero-title">Hi, I'm <span class="accent" data-name>Sophia Feldman</span></h1>
+          <h1 class="hero-title">
+            Hi, I'm
+            <span class="hero-title-rotator" id="hero-title-rotator" aria-live="polite">
+              <span class="hero-title-rotator-viewport" id="hero-title-rotator-viewport">
+                <span class="hero-title-phrase accent is-current" id="hero-title-current"></span>
+                <span class="hero-title-phrase accent is-next" id="hero-title-next" aria-hidden="true"></span>
+              </span>
+            </span>
+          </h1>
           <p class="hero-subtitle"></p>
         </div>
         <div class="hero-aside">
@@ -100,7 +108,7 @@
     <p>&copy; <span id="year"></span> <span data-name>Sophia Feldman</span></p>
   </footer>
 
-  <script src="js/projects.js?v=15"></script>
-  <script src="js/main.js?v=31"></script>
+  <script src="js/projects.js?v=17"></script>
+  <script src="js/main.js?v=32"></script>
 </body>
 </html>

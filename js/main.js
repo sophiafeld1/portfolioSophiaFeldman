@@ -554,6 +554,90 @@ function setupNav() {
   });
 }
 
+function setupHeroRotator() {
+  const phrases = siteConfig.heroRotatorPhrases?.length
+    ? siteConfig.heroRotatorPhrases
+    : [siteConfig.name];
+  const rotator = document.getElementById("hero-title-rotator");
+  const viewport = document.getElementById("hero-title-rotator-viewport");
+  const currentEl = document.getElementById("hero-title-current");
+  const nextEl = document.getElementById("hero-title-next");
+  if (!rotator || !viewport || !currentEl || !nextEl || phrases.length < 2) return;
+
+  let index = 0;
+  let timer = null;
+  let animating = false;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const duration = reducedMotion ? 0 : 500;
+
+  function measurePhraseWidth(text) {
+    const measure = document.createElement("span");
+    measure.className = "hero-title-phrase accent";
+    measure.style.visibility = "hidden";
+    measure.style.position = "absolute";
+    measure.style.whiteSpace = "nowrap";
+    measure.textContent = text;
+    viewport.appendChild(measure);
+    const width = measure.offsetWidth;
+    measure.remove();
+    return width;
+  }
+
+  function setViewportWidth(text) {
+    viewport.style.minWidth = `${measurePhraseWidth(text)}px`;
+  }
+
+  const maxWidth = phrases.reduce(
+    (widest, phrase) => Math.max(widest, measurePhraseWidth(phrase)),
+    0
+  );
+  viewport.style.minWidth = `${maxWidth}px`;
+
+  currentEl.textContent = phrases[0];
+
+  function swapInstant(nextIndex) {
+    index = nextIndex;
+    currentEl.textContent = phrases[index];
+    nextEl.textContent = "";
+    nextEl.setAttribute("aria-hidden", "true");
+    setViewportWidth(phrases[index]);
+  }
+
+  function advancePhrase() {
+    if (animating) return;
+
+    const nextIndex = (index + 1) % phrases.length;
+    const nextPhrase = phrases[nextIndex];
+
+    if (reducedMotion) {
+      swapInstant(nextIndex);
+      return;
+    }
+
+    animating = true;
+    nextEl.textContent = nextPhrase;
+    nextEl.setAttribute("aria-hidden", "false");
+    setViewportWidth(nextPhrase);
+    rotator.classList.add("is-animating");
+
+    window.setTimeout(() => {
+      index = nextIndex;
+      currentEl.textContent = nextPhrase;
+      nextEl.textContent = "";
+      nextEl.setAttribute("aria-hidden", "true");
+      rotator.classList.remove("is-animating");
+      animating = false;
+    }, duration);
+  }
+
+  function startTimer() {
+    if (timer) clearInterval(timer);
+    timer = window.setInterval(advancePhrase, 2000);
+  }
+
+  startTimer();
+}
+
 function renderSiteConfig() {
   document.title = `${siteConfig.name} — Portfolio`;
   document.querySelectorAll("[data-name]").forEach((el) => {
@@ -584,6 +668,7 @@ document.getElementById("year").textContent = new Date().getFullYear();
 
 applyWorkRevealTransition();
 renderSiteConfig();
+setupHeroRotator();
 setupAboutCarousel();
 renderProjects();
 setupWorkGrid();
