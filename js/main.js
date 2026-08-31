@@ -1,12 +1,10 @@
 function renderProjects() {
-  const grid = document.getElementById("projects-grid");
-  if (!grid || !projects.length) return;
+  const list = document.getElementById("work-list");
+  if (!list || !projects.length) return;
 
-  grid.innerHTML = projects
-    .map((project) => {
-      const imageHtml = project.image
-        ? `<img class="project-image" src="${project.image}" alt="${project.title} screenshot" loading="lazy">`
-        : `<div class="project-image-placeholder">No preview</div>`;
+  list.innerHTML = projects
+    .map((project, index) => {
+      const number = String(index + 1).padStart(2, "0");
 
       const links = [];
       if (project.liveUrl) {
@@ -15,19 +13,38 @@ function renderProjects() {
       if (project.githubUrl) {
         links.push(`<a href="${project.githubUrl}" target="_blank" rel="noopener">Code</a>`);
       }
+      if (project.clientUrl) {
+        links.push(
+          `<a href="${project.clientUrl}" target="_blank" rel="noopener">${project.clientLabel || "Client site"}</a>`
+        );
+      }
 
-      const tags = (project.tags || [])
-        .map((tag) => `<span class="tag">${tag}</span>`)
+      const tools = (project.tools || [])
+        .map((tool) => `<li>${tool}</li>`)
         .join("");
 
+      const previewHtml = project.image
+        ? `<img class="work-preview" src="${project.image}" alt="${project.title} preview" loading="lazy">`
+        : `<div class="work-preview work-preview-placeholder">Preview coming soon</div>`;
+
       return `
-        <article class="project-card">
-          ${imageHtml}
-          <div class="project-body">
-            <h3 class="project-title">${project.title}</h3>
-            <p class="project-desc">${project.description}</p>
-            ${tags ? `<div class="project-tags">${tags}</div>` : ""}
-            ${links.length ? `<div class="project-links">${links.join("")}</div>` : ""}
+        <article class="work-item">
+          <div class="work-item-header">
+            <span class="work-number">${number}</span>
+            <div class="work-item-titles">
+              <h3 class="work-title">${project.title}</h3>
+              <p class="work-context">${project.context || ""}</p>
+            </div>
+          </div>
+          <div class="work-item-details">
+            <div class="work-details-inner">
+              ${previewHtml}
+              <div class="work-details-text">
+                <p class="work-desc">${project.description}</p>
+                ${tools ? `<ul class="work-tools">${tools}</ul>` : ""}
+                ${links.length ? `<div class="work-links">${links.join("")}</div>` : ""}
+              </div>
+            </div>
           </div>
         </article>
       `;

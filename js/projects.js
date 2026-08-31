@@ -30,29 +30,43 @@ const siteConfig = {
 const projects = [
   {
     title: "ISAT Recruiter",
+    context: "ISAT Senior Capstone",
     description:
-      "Built and deployed an AI-powered academic advising agent for JMU's ISAT program — full-stack system with LangGraph, Next.js, and PostgreSQL.",
-    tags: ["AI", "Web"],
+      "An AI-powered advising agent that helps prospective and current ISAT students navigate the program — answers questions about courses, concentrations, and prerequisites, and generates 4-year academic plans using RAG over ABET docs, course catalogs, and ISAT website content.",
+    tools: ["LangGraph", "RAG", "Next.js", "PostgreSQL", "OpenAI API", "Python"],
     liveUrl: "https://isat-recruiter-2w1a-n2hnyxvr6-sophias-projects-5010dcb3.vercel.app/",
     githubUrl: "https://github.com/sophiafeld1/ISATRecruiter",
     image: "assets/isat-recruiter.png",
   },
   {
     title: "Path to Peace Psychotherapy",
+    context: "Visions Web Development",
     description:
-      "Built and deployed a production website for a psychotherapy practice — from design through launch on Vercel.",
-    tags: ["Web"],
+      "Built and deployed a production website for a psychotherapy practice in Reston, VA — a client project through Visions web development, with contact forms powered by the Postmark API.",
+    tools: ["Next.js", "Vercel", "Postmark API", "JavaScript"],
     liveUrl: "https://path2-peace.vercel.app/",
     githubUrl: "https://github.com/SophiaFeld1/Path2Peace",
     image: "assets/path-to-peace.png",
   },
   {
     title: "E3 Sponsor Database",
+    context: "Madison Consulting Club",
     description:
-      "Built a Streamlit app for Empowerment3 that centralizes sponsor records and generates customized outreach emails — search and filter the database, then populate sponsorship emails from record fields and criteria (template-driven)",
-    tags: ["Streamlit", "Database"],
+      "Pro-bono consulting project for Empowerment3 — a Streamlit app that centralizes sponsor records and generates customized outreach emails from database fields and criteria (template-driven, not AI).",
+    tools: ["Streamlit", "Python", "Pandas", "SQL"],
     liveUrl: "https://sophiafeld1-empowerment3-app-bbtrse.streamlit.app/",
     githubUrl: "https://github.com/sophiafeld1/Empowerment3",
+    clientUrl: "https://www.jmu.edu/chbs/kinesiology/empowerment3/",
+    clientLabel: "Empowerment3",
     image: "assets/e3-sponsor-database.png",
+  },
+  {
+    title: "Visions Clothing",
+    context: "Visions Web Development",
+    description:
+      "Founded and built an online clothing brand — designed products, built the e-commerce site, and ran digital marketing. Generated $1,500+ across 36 sales.",
+    tools: ["Next.js", "Vercel", "E-commerce"],
+    liveUrl: "https://visions-shop-sophias-projects-5010dcb3.vercel.app/",
+    githubUrl: "https://github.com/sophiafeld1/Visions",
   },
 ];

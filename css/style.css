@@ -264,86 +264,180 @@ a:hover {
   border-radius: 4px;
 }
 
-/* Projects */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.project-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
+/* Work list */
+.work-list {
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.2s, transform 0.2s;
+  border-top: 1px solid var(--border);
 }
 
-.project-card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  transform: translateY(-2px);
+.work-item {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.25s ease;
 }
 
-.project-image {
-  aspect-ratio: 16 / 10;
+.work-item:hover,
+.work-item:focus-within {
   background: var(--bg-alt);
+}
+
+.work-item-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding: 1.25rem 0;
+  cursor: default;
+}
+
+.work-number {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+  min-width: 2rem;
+}
+
+.work-item-titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.work-title {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 0.2rem;
+  transition: color 0.2s;
+}
+
+.work-item:hover .work-title {
+  color: var(--accent);
+}
+
+.work-context {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.work-item-details {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.45s ease, opacity 0.3s ease;
+}
+
+.work-item:hover .work-item-details,
+.work-item:focus-within .work-item-details {
+  max-height: 600px;
+  opacity: 1;
+}
+
+.work-details-inner {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1.5rem;
+  padding: 0 0 1.5rem 3.5rem;
+}
+
+.work-preview {
+  width: 100%;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
   object-position: top center;
-  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border);
 }
 
-.project-image-placeholder {
+.work-preview-placeholder {
   aspect-ratio: 16 / 10;
-  background: linear-gradient(135deg, var(--bg-alt) 0%, var(--border) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--card-bg);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
   color: var(--text-muted);
   font-size: 0.85rem;
 }
 
-.project-body {
-  padding: 1.25rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.work-details-text {
+  min-width: 0;
 }
 
-.project-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-}
-
-.project-desc {
-  font-size: 0.9rem;
+.work-desc {
+  font-size: 0.95rem;
   color: var(--text-muted);
+  line-height: 1.6;
   margin-bottom: 1rem;
-  flex: 1;
 }
 
-.project-tags {
+.work-tools {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
+  list-style: none;
   margin-bottom: 1rem;
 }
 
-.tag {
-  font-size: 0.75rem;
-  padding: 0.2em 0.6em;
-  background: var(--bg-alt);
-  border-radius: 4px;
+.work-tools li {
+  font-size: 0.8rem;
+  padding: 0.3em 0.7em;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
   color: var(--text-muted);
 }
 
-.project-links {
+.work-item:hover .work-tools li {
+  background: #fff;
+}
+
+.work-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   font-size: 0.9rem;
   font-weight: 500;
+}
+
+.work-links a {
+  color: var(--accent);
+}
+
+.work-links a:hover {
+  color: var(--accent-hover);
+}
+
+@media (max-width: 640px) {
+  .work-details-inner {
+    grid-template-columns: 1fr;
+    padding-left: 0;
+  }
+
+  .work-item-details {
+    max-height: none;
+    opacity: 1;
+  }
+
+  .work-item-header {
+    padding: 1rem 0;
+  }
+}
+
+@media (hover: hover) and (min-width: 641px) {
+  .work-item-details {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  .work-item:hover .work-item-details,
+  .work-item:focus-within .work-item-details {
+    max-height: 600px;
+    opacity: 1;
+  }
 }
 
 /* About */
