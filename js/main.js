@@ -372,6 +372,44 @@ function setupWorkReveal() {
   ).observe(work);
 }
 
+function setupHeroScroll() {
+  const hero = document.getElementById("hero");
+  const work = document.getElementById("work");
+  const sidebar = document.querySelector(".work-identity-sidebar");
+
+  function measureScrollState() {
+    let heroScrolled = false;
+    let workVisible = false;
+
+    if (hero) {
+      const rect = hero.getBoundingClientRect();
+      heroScrolled = rect.bottom <= window.innerHeight * 0.85;
+      document.body.classList.toggle("hero-scrolled", heroScrolled);
+    }
+
+    if (work) {
+      const rect = work.getBoundingClientRect();
+      workVisible = rect.top < window.innerHeight * 0.75 && rect.bottom > window.innerHeight * 0.2;
+    }
+
+    const show = heroScrolled && workVisible;
+    document.body.classList.toggle("work-identity-visible", show);
+    if (sidebar) sidebar.setAttribute("aria-hidden", show ? "false" : "true");
+  }
+
+  function scheduleMeasure() {
+    measureScrollState();
+    requestAnimationFrame(measureScrollState);
+    window.setTimeout(measureScrollState, 120);
+  }
+
+  window.addEventListener("scroll", measureScrollState, { passive: true });
+  window.addEventListener("resize", measureScrollState);
+  window.addEventListener("load", scheduleMeasure);
+  window.addEventListener("hashchange", scheduleMeasure);
+  scheduleMeasure();
+}
+
 function renderSkills() {
   const grid = document.getElementById("skills-grid");
   if (!grid || !siteConfig.skillCategories?.length) return;
@@ -473,11 +511,10 @@ function renderSiteConfig() {
 
   const headshot = siteConfig.headshot;
   if (headshot) {
-    const img = document.querySelector(".hero-headshot");
-    if (img) {
+    document.querySelectorAll(".hero-headshot, .work-identity-photo").forEach((img) => {
       img.src = headshot;
       img.alt = `${siteConfig.name} profile photo`;
-    }
+    });
   }
 
   const linkedin = document.querySelector(".hero-linkedin");
@@ -495,6 +532,7 @@ renderProjects();
 setupWorkGrid();
 setupProjectRouting();
 setupWorkReveal();
+setupHeroScroll();
 renderSkills();
 renderContact();
 setupContact();

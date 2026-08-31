@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=33">
+  <link rel="stylesheet" href="css/style.css?v=34">
 </head>
 <body>
   <header class="site-header">
@@ -50,10 +50,18 @@
     </section>
 
     <section id="work" class="section section-work">
-      <h2 class="section-title">Work</h2>
-      <div class="work-section" id="work-section">
-        <div id="work-list" class="work-grid"></div>
-        <div id="work-hover-panel-bottom" class="work-hover-panel work-hover-panel--bottom" aria-hidden="true"></div>
+      <div class="work-layout">
+        <div class="work-main">
+          <h2 class="section-title">Work</h2>
+          <div class="work-section" id="work-section">
+            <div id="work-list" class="work-grid"></div>
+            <div id="work-hover-panel-bottom" class="work-hover-panel work-hover-panel--bottom" aria-hidden="true"></div>
+          </div>
+        </div>
+        <aside class="work-identity-sidebar" aria-hidden="true">
+          <p class="work-identity-name accent" data-name>Sophia Feldman</p>
+          <img class="work-identity-photo" src="" alt="">
+        </aside>
       </div>
       <div id="work-detail-view" class="work-detail-view" hidden></div>
     </section>
@@ -91,6 +99,6 @@
   </footer>
 
   <script src="js/projects.js?v=15"></script>
-  <script src="js/main.js?v=25"></script>
+  <script src="js/main.js?v=29"></script>
 </body>
 </html>
