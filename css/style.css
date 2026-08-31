@@ -575,6 +575,8 @@ body.reveal-stagger.work-revealed .work-card[data-project-index="3"] {
   object-fit: cover;
   object-position: top center;
   transition: transform 0.35s ease;
+  background: var(--bg-alt);
+  pointer-events: none;
 }
 
 .work-card-image,
@@ -751,6 +753,8 @@ body.work-showing-detail #work.section {
   aspect-ratio: 16 / 10;
   object-fit: cover;
   object-position: top center;
+  background: var(--card-bg);
+  pointer-events: none;
 }
 
 .work-detail-image-placeholder {

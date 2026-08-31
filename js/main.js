@@ -63,10 +63,27 @@ function renderHoverPanel(project) {
   `;
 }
 
+function renderProjectPreview(project, className, options = {}) {
+  const { lazy = false } = options;
+  const label = `${project.title} preview`;
+
+  if (project.previewVideo) {
+    const poster = project.image ? ` poster="${project.image}"` : "";
+    return `<video class="${className}" autoplay loop muted playsinline${poster} aria-label="${label}">
+      <source src="${project.previewVideo}" type="video/mp4">
+    </video>`;
+  }
+
+  if (project.image) {
+    const lazyAttr = lazy ? ' loading="lazy"' : "";
+    return `<img class="${className}" src="${project.image}" alt="${label}"${lazyAttr}>`;
+  }
+
+  return `<div class="${className} ${className}-placeholder">No preview</div>`;
+}
+
 function renderDetailView(project, index) {
-  const previewHtml = project.image
-    ? `<img class="work-detail-image" src="${project.image}" alt="${project.title} preview">`
-    : `<div class="work-detail-image work-detail-image-placeholder">No preview</div>`;
+  const previewHtml = renderProjectPreview(project, "work-detail-image");
 
   const siteBtn = project.liveUrl
     ? `<a class="btn btn-primary" href="${project.liveUrl}" target="_blank" rel="noopener">View Website</a>`
@@ -115,9 +132,7 @@ function renderProjects() {
 
   const cards = projects.map((project, index) => {
     const row = index < 2 ? 0 : 1;
-    const previewHtml = project.image
-      ? `<img class="work-card-image" src="${project.image}" alt="${project.title} preview" loading="lazy">`
-      : `<div class="work-card-image work-card-image-placeholder">No preview</div>`;
+    const previewHtml = renderProjectPreview(project, "work-card-image", { lazy: true });
 
     return `
       <article class="work-card" data-project-index="${index}" data-row="${row}" tabindex="0">

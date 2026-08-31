@@ -59,7 +59,8 @@ const projects = [
     tools: ["Next.js", "Vercel", "Postmark API", "JavaScript"],
     liveUrl: "https://path2-peace.vercel.app/",
     githubUrl: "https://github.com/SophiaFeld1/Path2Peace",
-    image: "assets/path-to-peace.png",
+    image: "assets/path-to-peace-preview.png",
+    previewVideo: "assets/path-to-peace-preview.mp4",
   },
   {
     title: "Visions Clothing",
@@ -78,6 +79,8 @@ const projects = [
     tools: ["Next.js", "Vercel", "E-commerce"],
     liveUrl: "https://visions-shop-sophias-projects-5010dcb3.vercel.app/",
     githubUrl: "https://github.com/sophiafeld1/Visions",
+    image: "assets/visions-preview.png",
+    previewVideo: "assets/visionsitevid.mp4",
   },
   {
     title: "E3 Sponsor Database",
