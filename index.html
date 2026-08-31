@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sophia Feldman — portfolio of websites and projects">
+  <title>Sophia Feldman — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=3">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <a href="#" class="nav-logo" data-name>Sophia Feldman</a>
+      <ul class="nav-links">
+        <li><a href="#work">Work</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-layout">
+        <div class="hero-main">
+          <p class="hero-label">Portfolio</p>
+          <h1 class="hero-title">Hi, I'm <span class="accent" data-name>Sophia Feldman</span>.</h1>
+          <p class="hero-subtitle"></p>
+          <div class="hero-links">
+            <a href="#work" class="btn btn-primary">View my work</a>
+            <a href="assets/Sophia_Feldman_Resume.pdf" class="btn btn-secondary" target="_blank" rel="noopener">Resume</a>
+            <a href="#contact" class="btn btn-secondary">Get in touch</a>
+          </div>
+        </div>
+        <figure class="hero-headshot-frame">
+          <img class="hero-headshot" src="assets/sophiaheadshot.jpeg" alt="Sophia Feldman">
+        </figure>
+      </div>
+    </section>
+
+    <section id="work" class="section">
+      <h2 class="section-title">Work</h2>
+      <div id="projects-grid" class="projects-grid"></div>
+    </section>
+
+    <section id="about" class="section section-alt">
+      <div class="about-inner">
+        <h2 class="section-title">About</h2>
+        <p class="about-text"></p>
+      </div>
+    </section>
+
+    <section id="skills" class="section">
+      <h2 class="section-title">Skills</h2>
+      <p class="section-desc">Technologies and tools I work with.</p>
+      <div id="skills-grid" class="skills-grid"></div>
+    </section>
+
+    <section id="contact" class="section section-alt">
+      <h2 class="section-title">Contact</h2>
+      <p class="section-desc">Open to opportunities. Reach out anytime.</p>
+      <div class="contact-links" id="contact-links"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span id="year"></span> <span data-name>Sophia Feldman</span></p>
+  </footer>
+
+  <script src="js/projects.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
